@@ -2,7 +2,9 @@ import React from 'react';
 import './App.scss';
 import DatePicker from 'react-datepicker';
 import Moment from 'moment';
+import json2csv from 'json2csv';
 import { extendMoment } from 'moment-range';
+import { CSVLink } from "react-csv";
 const moment = extendMoment(Moment);
 
 function numberWithCommas(x) {
@@ -55,14 +57,16 @@ December 25, 2020`
     const holidays = this.state.holidays.split("\n").map(d => {
       return moment(d).format('YYYY-MM-DD');
     })
-
     let target = parseFloat(this.state.amount);
+    let previous = target;
     for (let day of range.by('day')) {
       const weekday = day.weekday();
       const format = day.format('YYYY-MM-DD');
       if (weekday !== 6 && weekday !== 6 && !holidays.includes(format)) {
-        rows.push({date: format, target});
+        const gain = target - previous;
+        rows.push({date: format, target, gain});
 
+        previous = target
         target = target * (this.state.target / 100) + target
       }
     }
@@ -79,15 +83,18 @@ December 25, 2020`
   }
 
   render () {
-    const rows = this.buildRows().map(row => (
+    const data = this.buildRows();
+    const rows = data.map(row => (
       <tr key={row.date}>
         <td>{row.date}</td>
         <td>${numberWithCommas(row.target.toFixed(2))}</td>
+        <td>${numberWithCommas(row.gain.toFixed(2))}</td>
       </tr>
-    ))
+    ));
+    const csvData = json2csv.parse(data)
     return (
       <div className="App">
-        <h1>Investment Tracker</h1>
+        <h1>Investment Target Tracker</h1>
 
         <p>Because trading without a plan is for bozos.</p>
   
@@ -106,11 +113,15 @@ December 25, 2020`
           </div>
         </form>
         <p>Trading days: {rows.length}</p>
+
+        <CSVLink data={csvData}>Download CSV</CSVLink>       
+
         <table>
           <thead>
             <tr>
               <th>Date</th>
               <th>Target</th>
+              <th>Gain Required</th>
             </tr>
           </thead>
           <tbody>
@@ -122,7 +133,6 @@ December 25, 2020`
       </div>
     );
   }
-  
 }
 
 export default App;
