@@ -30,6 +30,7 @@ December 25, 2020`
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeAmount = this.handleChangeAmount.bind(this);
+    this.handleChangeHolidays = this.handleChangeHolidays.bind(this);
     this.setStartDate = this.setStartDate.bind(this);
     this.generateTable = this.generateTable.bind(this);
     this.buildRows = this.buildRows.bind(this);
@@ -41,6 +42,10 @@ December 25, 2020`
 
   handleChangeAmount(event) {
     this.setState({amount: event.target.value});
+  }
+
+  handleChangeHolidays(event) {
+    this.setState({holidays: event.target.value});
   }
 
   buildRows() {
