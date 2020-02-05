@@ -14,11 +14,23 @@ function numberWithCommas(x) {
 class App extends React.Component {
   constructor(props) {
     super(props);
+    let date = moment().startOf('year').toDate();
+    let endDate = moment().endOf('year').toDate();
+
+    if (localStorage['date']) {
+      date = moment(localStorage['date']).toDate();
+    }
+
+    if (localStorage['endDate']) {
+      endDate = moment(localStorage['endDate']).toDate();
+    }
+
     this.state = {
-      amount: "10000",
-      target: "2.00",
-      date: new Date(),
-      holidays: `January 1, 2020
+      amount: localStorage['amount'] || "10000",
+      target: localStorage['target'] || "2.00",
+      date,
+      endDate,
+      holidays: localStorage['holidays'] || `January 1, 2020
 January 20, 2020
 February 17, 2020
 April 10, 2020
@@ -34,6 +46,7 @@ December 25, 2020`
     this.handleChangeAmount = this.handleChangeAmount.bind(this);
     this.handleChangeHolidays = this.handleChangeHolidays.bind(this);
     this.setStartDate = this.setStartDate.bind(this);
+    this.setEndDate = this.setEndDate.bind(this);
     this.generateTable = this.generateTable.bind(this);
     this.buildRows = this.buildRows.bind(this);
   }
@@ -53,12 +66,13 @@ December 25, 2020`
   buildRows() {
     const rows = [];
 
-    const range = moment.range(this.state.date, '2020-12-31');
+    const range = moment.range(this.state.date, this.state.endDate);
     const holidays = this.state.holidays.split("\n").map(d => {
       return moment(d).format('YYYY-MM-DD');
     })
     let target = parseFloat(this.state.amount);
     let previous = target;
+
     for (let day of range.by('day')) {
       const weekday = day.weekday();
       const format = day.format('YYYY-MM-DD');
@@ -82,6 +96,10 @@ December 25, 2020`
     this.setState({date});
   }
 
+  setEndDate(endDate) {
+    this.setState({endDate});
+  }
+
   render () {
     const data = this.buildRows();
     const rows = data.map(row => (
@@ -91,7 +109,14 @@ December 25, 2020`
         <td>${numberWithCommas(row.gain.toFixed(2))}</td>
       </tr>
     ));
-    const csvData = json2csv.parse(data)
+    const csvData = json2csv.parse(data);
+    
+    // Save state to localStorage
+    for (const key in this.state) {
+      if (this.state.hasOwnProperty(key)) {
+        localStorage[key] = this.state[key];
+      }
+    }
     return (
       <div className="App">
         <h1>Investment Target Tracker</h1>
@@ -100,16 +125,19 @@ December 25, 2020`
   
         <form onChange={this.generateTable}>
           <div>
-            <label for="input-target">Amount:</label> <input id="input-target" value={this.state.amount} onChange={this.handleChangeAmount} type="text" />
+            <label htmlFor="input-target">Amount:</label> <input id="input-target" value={this.state.amount} onChange={this.handleChangeAmount} type="text" />
           </div>
           <div>
-            <label for="input-target">Target:</label> <input id="input-target" value={this.state.target} onChange={this.handleChange} type="text" />
+            <label htmlFor="input-target">Target % Daily Gain:</label> <input id="input-target" value={this.state.target} onChange={this.handleChange} type="text" />
           </div>
           <div>
-            <label for="input-date">Start Date:</label> <DatePicker id="input-date" selected={this.state.date} onChange={date => this.setStartDate(date)} />
+            <label htmlFor="input-date">Start Date:</label> <DatePicker id="input-date" selected={this.state.date} onChange={date => this.setStartDate(date)} />
           </div>
           <div>
-            <label for="input-holidays">Public Holidays (Default Nasdaq 2020):</label> <textarea id="input-holidays" rows="11" value={this.state.holidays} onChange={this.handleChangeHolidays} />
+            <label htmlFor="input-enddate">End Date:</label> <DatePicker id="input-date" selected={this.state.endDate} onChange={date => this.setEndDate(date)} />
+          </div>
+          <div>
+            <label htmlFor="input-holidays">Public Holidays (Default Nasdaq 2020):</label> <textarea id="input-holidays" rows="11" value={this.state.holidays} onChange={this.handleChangeHolidays} />
           </div>
         </form>
         <p>Trading days: {rows.length}</p>
