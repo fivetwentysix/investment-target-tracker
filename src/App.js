@@ -121,7 +121,9 @@ December 25, 2020`
       <div className="App">
         <h1>Investment Target Tracker</h1>
 
-        <p>Because trading without a plan is for bozos.</p>
+        <p><i>Because trading without a plan is for bozos.</i></p>
+
+        <p><small>Saves to local storage in your web browser. Nothing is tracked or saved on the server.</small></p>
   
         <form onChange={this.generateTable}>
           <div>
