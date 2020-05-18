@@ -76,7 +76,7 @@ December 25, 2020`
     for (let day of range.by('day')) {
       const weekday = day.weekday();
       const format = day.format('YYYY-MM-DD');
-      if (weekday !== 6 && weekday !== 6 && !holidays.includes(format)) {
+      if (weekday !== 6 && weekday !== 7 && !holidays.includes(format)) {
         const gain = target - previous;
         rows.push({date: format, target, gain});
 
