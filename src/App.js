@@ -120,9 +120,7 @@ December 25, 2020`
     return (
       <div className="App">
         <h1>Investment Target Tracker</h1>
-
-        <p><small>Saves to local storage in your web browser. Nothing is tracked or saved on the server.</small></p>
-  
+        
         <form onChange={this.generateTable}>
           <div>
             <label htmlFor="input-target">Amount:</label> <input id="input-target" value={this.state.amount} onChange={this.handleChangeAmount} type="text" />
