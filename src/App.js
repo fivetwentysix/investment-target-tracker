@@ -121,8 +121,6 @@ December 25, 2020`
       <div className="App">
         <h1>Investment Target Tracker</h1>
 
-        <p><i>Because trading without a plan is for bozos.</i></p>
-
         <p><small>Saves to local storage in your web browser. Nothing is tracked or saved on the server.</small></p>
   
         <form onChange={this.generateTable}>
@@ -159,7 +157,7 @@ December 25, 2020`
           </tbody>
         </table>
   
-        <small>Created by <a href="https://fivetwentysix.com">@fivetwentysix</a></small>
+        <small>Created by <a href="https://github.com/fivetwentysix">@fivetwentysix</a></small>
       </div>
     );
   }
